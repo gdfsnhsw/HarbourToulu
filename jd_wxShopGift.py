@@ -21,9 +21,8 @@ from datetime import datetime
 import json
 import random
 from urllib.parse import quote_plus, unquote_plus
-import logging
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger()
+from functools import partial
+print = partial(print, flush=True)
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -32,14 +31,14 @@ try:
     from jdCookie import get_cookies
     getCk = get_cookies()
 except:
-    logger.info("请先下载依赖脚本，\n下载链接: https://raw.githubusercontent.com/HarbourJ/HarbourToulu/main/jdCookie.py")
+    print("请先下载依赖脚本，\n下载链接: https://raw.githubusercontent.com/HarbourJ/HarbourToulu/main/jdCookie.py")
     sys.exit(3)
 redis_url = os.environ.get("redis_url") if os.environ.get("redis_url") else "172.17.0.1"
 redis_pwd = os.environ.get("redis_pwd") if os.environ.get("redis_pwd") else ""
 activityId = os.environ.get("jd_wxShopGiftId") if os.environ.get("jd_wxShopGiftId") else ""
 
 if not activityId:
-    logger.info("⚠️未发现有效活动变量,退出程序!")
+    print("⚠️未发现有效活动变量,退出程序!")
     sys.exit()
 activityUrl = f"https://lzkj-isv.isvjcloud.com/wxShopGift/activity?activityId={activityId}"
 
@@ -50,12 +49,12 @@ def redis_conn():
             pool = redis.ConnectionPool(host=redis_url, port=6379, decode_responses=True, socket_connect_timeout=5, password=redis_pwd)
             r = redis.Redis(connection_pool=pool)
             r.get('conn_test')
-            logger.info('✅redis连接成功')
+            print('✅redis连接成功')
             return r
         except:
-            logger.info("⚠️redis连接异常")
+            print("⚠️redis连接异常")
     except:
-        logger.info("⚠️缺少redis依赖，请运行pip3 install redis")
+        print("⚠️缺少redis依赖，请运行pip3 install redis")
         sys.exit()
 
 def getToken(ck, r=None):
@@ -69,12 +68,13 @@ def getToken(ck, r=None):
     try:
         if r is not None:
             Token = r.get(f'{activityUrl.split("https://")[1].split("-")[0]}_{pt_pin}')
-            # logger.info("Token过期时间", r.ttl(f'{activityUrl.split("https://")[1].split("-")[0]}_{pt_pin}'))
+            # print("Token过期时间", r.ttl(f'{activityUrl.split("https://")[1].split("-")[0]}_{pt_pin}'))
             if Token is not None:
-                logger.info(f"♻️获取缓存Token->: {Token}")
+                # print(f"♻️获取缓存Token->: {Token}")
+                print(f"♻️获取缓存Token")
                 return Token
             else:
-                logger.info("🈳去设置Token缓存-->")
+                print("🈳去设置Token缓存")
                 s.headers = {
                     'Connection': 'keep-alive',
                     'Accept-Encoding': 'gzip, deflate, br',
@@ -87,20 +87,20 @@ def getToken(ck, r=None):
                     'Accept': '*/*'
                 }
                 sign_txt = sign({"url": f"{host}", "id": ""}, 'isvObfuscator')
-                # logger.info(sign_txt)
+                # print(sign_txt)
                 f = s.post('https://api.m.jd.com/client.action', verify=False, timeout=30)
                 if f.status_code != 200:
-                    logger.info(f.status_code)
+                    print(f.status_code)
                     return
                 else:
                     if "参数异常" in f.text:
                         return
                 Token_new = f.json()['token']
-                logger.info(f"Token->: {Token_new}")
+                # print(f"Token->: {Token_new}")
                 if r.set(f'{activityUrl.split("https://")[1].split("-")[0]}_{pt_pin}', Token_new, ex=1800):
-                    logger.info("✅Token缓存设置成功")
+                    print("✅Token缓存设置成功")
                 else:
-                    logger.info("❌Token缓存设置失败")
+                    print("❌Token缓存设置失败")
                 return Token_new
         else:
             s.headers = {
@@ -115,16 +115,16 @@ def getToken(ck, r=None):
                 'Accept': '*/*'
             }
             sign_txt = sign({"url": f"{host}", "id": ""}, 'isvObfuscator')
-            # logger.info(sign_txt)
+            # print(sign_txt)
             f = s.post('https://api.m.jd.com/client.action', verify=False, timeout=30)
             if f.status_code != 200:
-                logger.info(f.status_code)
+                print(f.status_code)
                 return
             else:
                 if "参数异常" in f.text:
                     return
             Token = f.json()['token']
-            logger.info(f"Token->: {Token}")
+            print(f"Token->: {Token}")
             return Token
     except:
         return
@@ -237,7 +237,7 @@ def getMyPing(venderId):
     if res['result']:
         return res['data']['nickname'], res['data']['secretPin']
     else:
-        logger.info(f"⚠️{res['errorMessage']}")
+        print(f"⚠️{res['errorMessage']}")
 
 def accessLogWithAD(venderId, pin):
     url = "https://lzkj-isv.isvjcloud.com/common/accessLogWithAD"
@@ -283,10 +283,10 @@ def activityContent(pin):
         endTime = res['data']['endTime']
         list = res['data']['list']
         if getJdTime() > endTime:
-            logger.info("⛈活动已结束,下次早点来~")
+            print("⛈活动已结束,下次早点来~")
             sys.exit()
         if len(list) == 0:
-            logger.info("礼品已领完")
+            print("礼品已领完")
             act_label = False
             return act_label
         for r in list:
@@ -294,7 +294,7 @@ def activityContent(pin):
         if len(reward) > 0:
             reward = reward.replace('jd', '京豆').replace('jf', '积分').replace('dq', '东券')
     else:
-        logger.info(f"⛈{res['errorMessage']}")
+        print(f"⛈{res['errorMessage']}")
         sys.exit()
     return reward, act_label
 
@@ -317,9 +317,9 @@ def draw(pin, nickname, reward):
     response = requests.request("POST", url, headers=headers, data=payload)
     res = response.json()
     if res['result']:
-        logger.info(f"🎉🎉🎉{nickname} 成功领取 {reward}")
+        print(f"🎉🎉🎉{nickname} 成功领取 {reward}")
     else:
-        logger.info(f"⛈⛈⛈{nickname} {res['errorMessage']}")
+        print(f"⛈⛈⛈{nickname} {res['errorMessage']}")
 
 def attendLog(venderId, pin):
     url = "https://lzkj-isv.isvjcloud.com/common/attendLog"
@@ -347,13 +347,13 @@ if __name__ == '__main__':
         if not cks:
             sys.exit()
     except:
-        logger.info("未获取到有效COOKIE,退出程序！")
+        print("未获取到有效COOKIE,退出程序！")
         sys.exit()
     num = 0
     for cookie in cks[:]:
         num += 1
         if num % 9 == 0:
-            logger.info("⏰等待8s,休息一下")
+            print("⏰等待8s,休息一下")
             time.sleep(8)
         global ua, activityCookie, token
         ua = userAgent()
@@ -362,11 +362,11 @@ if __name__ == '__main__':
             pt_pin = unquote_plus(pt_pin)
         except IndexError:
             pt_pin = f'用户{num}'
-        logger.info(f'\n******开始【京东账号{num}】{pt_pin} *********\n')
-        logger.info(datetime.now())
+        print(f'\n******开始【京东账号{num}】{pt_pin} *********\n')
+        print(datetime.now())
         token = getToken(cookie, r)
         if token is None:
-            logger.info(f"⚠️获取Token失败！⏰等待2s")
+            print(f"⚠️获取Token失败！⏰等待2s")
             time.sleep(2)
             continue
         time.sleep(0.5)
