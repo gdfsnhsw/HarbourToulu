@@ -28,7 +28,11 @@ def updateDependent():
     """
     system = platform.system().lower()
     if system == "windows":
-        if repoTreeUpdate():
+        print("识别本机设备为Windows amd64")
+        rtu = repoTreeUpdate()
+        if rtu == 9:
+            sys.exit()
+        if rtu:
             removeOldSign()
             if download("jd_sign-win-amd64.zip"):
                 import zipfile
@@ -39,13 +43,20 @@ def updateDependent():
                 return True
     elif system == "darwin":
         print("识别本机设备为MacOS x86_64")
-        if repoTreeUpdate():
+        rtu = repoTreeUpdate()
+        if rtu == 9:
+            sys.exit()
+        if rtu:
             removeOldSign()
             if download("jd_sign-darwin-x86_64.tar.gz"):
                 os.system('tar xvf jd_sign-darwin-x86_64.tar.gz')
                 return True
     else:
-        if repoTreeUpdate():
+        print("识别本机设备为Linux")
+        rtu = repoTreeUpdate()
+        if rtu == 9:
+            sys.exit()
+        if rtu:
             removeOldSign()
             framework = os.uname().machine
             if framework == "x86_64":
@@ -175,7 +186,7 @@ def repoTreeUpdate():
                     result = remote_redis(export_name="Test01", db_index=15)
                     print(result)
                     print("依赖正常,退出程序")
-                    sys.exit()
+                    return 9
                 except:
                     print("依赖不正常,自动修复中...")
                     print("*" * 30)
