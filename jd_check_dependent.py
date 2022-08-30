@@ -171,9 +171,9 @@ def repoTreeUpdate():
             else:
                 print("检测到依赖版本无更新")
                 try:
-                    from jd_sign import checkpass
-                    if checkpass(1, 1) == 2:
-                        pass
+                    from jd_sign import remote_redis
+                    result = remote_redis(export_name="Test01", db_index=15)
+                    print(result)
                     print("依赖正常,退出程序")
                     sys.exit()
                 except:
