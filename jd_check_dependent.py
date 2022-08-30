@@ -87,6 +87,7 @@ def check_ld_libc():
         pass
     else:
         if download("ld-linux-aarch64.tar.gz"):
+            os.system('tar xvf ld-linux-aarch64.tar.gz')
             os.system('cp ld-linux-aarch64.so.1 /lib')
             if "ld-linux-aarch64.so.1" in (os.listdir('/lib')):
                 print("arm64-ld依赖安装完成~")
@@ -98,6 +99,7 @@ def check_ld_libc():
         pass
     else:
         if download("libc.musl-aarch64.tar.gz"):
+            os.system('tar xvf libc.musl-aarch64.tar.gz')
             os.system('cp libc.musl-aarch64.so.1 /lib')
             if "libc.musl-aarch64.so.1" in (os.listdir('/lib')):
                 print("arm64-libc依赖安装完成~")
