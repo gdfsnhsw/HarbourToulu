@@ -27,13 +27,7 @@ logger = logging.getLogger()
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-try:
-    if "aarch" in os.uname().machine:
-        from utils.jd_sign_arm64 import *
-    else:
-        from utils.jd_sign_x86 import *
-except:
-    from utils.jd_sign import *
+from jd_sign import *
 try:
     from jdCookie import get_cookies
     getCk = get_cookies()
