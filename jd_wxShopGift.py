@@ -163,11 +163,16 @@ def getActivity():
         'Connection': 'keep-alive'
     }
     response = requests.request("GET", url, headers=headers)
-    if response.cookies:
-        cookies = response.cookies.get_dict()
-        set_cookies = [(set_cookie + "=" + cookies[set_cookie]) for set_cookie in cookies]
-        set_cookie = ''.join(sorted([(set_cookie + ";") for set_cookie in set_cookies]))
-    return set_cookie
+    if response.status_code == 200:
+        if response.cookies:
+            cookies = response.cookies.get_dict()
+            set_cookies = [(set_cookie + "=" + cookies[set_cookie]) for set_cookie in cookies]
+            set_cookie = ''.join(sorted([(set_cookie + ";") for set_cookie in set_cookies]))
+        return set_cookie
+    else:
+        print(response.status_code)
+        print("⚠️疑似ip黑了")
+        sys.exit()
 
 def getSystemConfigForNew():
     url = "https://lzkj-isv.isvjcloud.com/wxCommonInfo/getSystemConfigForNew"

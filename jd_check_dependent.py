@@ -50,6 +50,7 @@ def updateDependent():
             removeOldSign()
             if download("jd_sign-darwin-x86_64.tar.gz"):
                 os.system('tar xvf jd_sign-darwin-x86_64.tar.gz')
+                os.system('rm -rf jd_sign-darwin-x86_64.tar.gz')
                 return True
     else:
         print("识别本机设备为Linux")
@@ -62,20 +63,24 @@ def updateDependent():
             if framework == "x86_64":
                 if download("jd_sign-linux-amd64.tar.gz"):
                     os.system('tar xvf jd_sign-linux-amd64.tar.gz')
+                    os.system('rm -rf jd_sign-linux-amd64.tar.gz')
                     return True
             elif framework == "aarch64" or framework == "arm64":
                 check_ld_libc()
                 if download("jd_sign-linux-arm64.tar.gz"):
                     os.system('tar xvf jd_sign-linux-arm64.tar.gz')
+                    os.system('rm -rf jd_sign-linux-arm64.tar.gz')
                     return True
             elif framework == "armv7l":
                 check_ld_libc()
                 if download("jd_sign-linux-arm.tar.gz"):
                     os.system('tar xvf jd_sign-linux-arm.tar.gz')
+                    os.system('rm -rf jd_sign-linux-arm.tar.gz')
                     return True
             else:
                 if download("jd_sign-linux-amd64.tar.gz"):
                     os.system('tar xvf jd_sign-linux-amd64.tar.gz')
+                    os.system('rm -rf jd_sign-linux-amd64.tar.gz')
                     return True
 
 def check_ld_libc():
@@ -92,6 +97,7 @@ def check_ld_libc():
             if "ld-linux-aarch64.so.1" in (os.listdir('/lib')):
                 print("arm64-ld依赖安装完成~")
                 os.system('rm -rf ld-linux-aarch64.tar.gz')
+                os.system('rm -rf ld-linux-aarch64.so.1')
             else:
                 print("arm64-ld依赖安装失败,请前往https://github.com/HarbourJ/HarbourToulu/blob/main/README.md,查看依赖安装教程")
     if "libc.musl-aarch64.so.1" in (os.listdir('/lib')):
@@ -104,6 +110,7 @@ def check_ld_libc():
             if "libc.musl-aarch64.so.1" in (os.listdir('/lib')):
                 print("arm64-libc依赖安装完成~")
                 os.system('rm -rf libc.musl-aarch64.tar.gz')
+                os.system('rm -rf libc.musl-aarch64.so.1')
             else:
                 print("arm64-libc依赖安装失败,请前往https://github.com/HarbourJ/HarbourToulu/blob/main/README.md,查看依赖安装教程")
 
