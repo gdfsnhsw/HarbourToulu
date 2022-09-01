@@ -208,30 +208,6 @@ def getSystemConfigForNew():
     response = requests.request("POST", url, headers=headers, data=payload)
     refresh_cookies(response)
 
-def getSimpleActInfoVo():
-    url = "https://cjhy-isv.isvjcloud.com/customer/getSimpleActInfoVo"
-    payload = f"activityId={activityId}"
-    headers = {
-        'Host': 'cjhy-isv.isvjcloud.com',
-        'Accept': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest',
-        'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
-        'Accept-Encoding': 'gzip, deflate, br',
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Origin': 'https://cjhy-isv.isvjcloud.com',
-        'User-Agent': ua,
-        'Connection': 'keep-alive',
-        'Referer': activityUrl,
-        'Cookie': activityCookie
-    }
-    response = requests.request("POST", url, headers=headers, data=payload)
-    refresh_cookies(response)
-    res = response.json()
-    if res['result']:
-        pass
-    else:
-        print(res['errorMessage'])
-
 def getMyPing(index):
     url = "https://cjhy-isv.isvjcloud.com/customer/getMyPing"
     payload = f"userId=599119&token={token}&fromType=APP&riskType=1"
@@ -286,7 +262,7 @@ def getSimpleActInfoVo():
 
 def accessLog(pin):
     url = "https://cjhy-isv.isvjcloud.com/common/accessLog"
-    payload = f"venderId=1&code=99&pin={quote_plus(pin)}&activityId={activityId}&pageUrl={quote_plus(activityUrl)}&subType=app"
+    payload = f"venderId=1&code=99&pin={quote_plus(quote_plus(pin))}&activityId={activityId}&pageUrl={quote_plus(activityUrl)}&subType=app"
     headers = {
         'Host': 'cjhy-isv.isvjcloud.com',
         'Accept': 'application/json',
@@ -305,7 +281,7 @@ def accessLog(pin):
 
 def getUserInfo(pin):
     url = "https://cjhy-isv.isvjcloud.com/wxActionCommon/getUserInfo"
-    payload = f"pin={quote_plus(pin)}"
+    payload = f"pin={quote_plus(quote_plus(pin))}"
     headers = {
         'Host': 'cjhy-isv.isvjcloud.com',
         'Accept': 'application/json',
@@ -329,7 +305,7 @@ def getUserInfo(pin):
 
 def getOpenCardAllStatuesNew(pin):
     url = "https://cjhy-isv.isvjcloud.com/microDz/invite/activity/wx/getOpenCardAllStatuesNew"
-    payload = f"activityId={activityId}&pin={quote_plus(pin)}&isInvited=1"
+    payload = f"activityId={activityId}&pin={quote_plus(quote_plus(pin))}&isInvited=1"
     headers = {
         'Host': 'cjhy-isv.isvjcloud.com',
         'Accept': 'application/json',
@@ -346,7 +322,6 @@ def getOpenCardAllStatuesNew(pin):
     response = requests.request("POST", url, headers=headers, data=payload)
     # refresh_cookies(response)
     res = response.json()
-
     if res['result']:
         return res['data']['isCanJoin'], res['data']['reward'], res['data']['list']
     else:
@@ -354,7 +329,7 @@ def getOpenCardAllStatuesNew(pin):
 
 def isInvited(pin):
     url = "https://cjhy-isv.isvjcloud.com/microDz/invite/activity/wx/isInvited"
-    payload = f"activityId={activityId}&pin={quote_plus(pin)}"
+    payload = f"activityId={activityId}&pin={quote_plus(quote_plus(pin))}"
     headers = {
         'Host': 'cjhy-isv.isvjcloud.com',
         'Accept': 'application/json',
@@ -382,7 +357,7 @@ def acceptInvite(inviterNick, inviterPin, inviterImg, pin, nickName, inviteeImg)
         inviteeImg = quote_plus(inviteeImg)
     except:
         inviteeImg = quote_plus("https://img10.360buyimg.com/imgzone/jfs/t1/21383/2/6633/3879/5c5138d8E0967ccf2/91da57c5e2166005.jpg")
-    payload = f"activityId={activityId}&inviter={quote_plus(inviterPin)}&inviterImg={quote_plus(inviterImg)}&inviterNick={quote_plus(inviterNick)}&invitee={quote_plus(pin)}&inviteeImg={quote_plus(inviteeImg)}&inviteeNick={quote_plus(nickName)}"
+    payload = f"activityId={activityId}&inviter={quote_plus(quote_plus(inviterPin))}&inviterImg={quote_plus(inviterImg)}&inviterNick={quote_plus(inviterNick)}&invitee={quote_plus(quote_plus(pin))}&inviteeImg={quote_plus(inviteeImg)}&inviteeNick={quote_plus(nickName)}"
     headers = {
         'Host': 'cjhy-isv.isvjcloud.com',
         'Accept': 'application/json',
@@ -571,7 +546,7 @@ if __name__ == '__main__':
                             print(f"🎉加入{isInvi['nickName']}队伍成功")
                             inviteSuccNum += 1
                             print(f"本次车头已邀请{inviteSuccNum}人")
-                            if inviteSuccNum >=  maxGroup * 5:
+                            if inviteSuccNum >= maxGroup * 5:
                                 print(f"已达到{maxGroup}组好友,退出程序~")
                                 sys.exit()
                     else:
@@ -580,6 +555,6 @@ if __name__ == '__main__':
                 inviterPin = secretPin
                 inviterImg = yunMidImageUrl
                 inviterNick = nickName
-                activityUrl = f"https://cjhy-isv.isvjcloud.com/microDz/invite/activity/wx/view/index/3499100?activityId={activityId}&inviter={quote_plus(inviterPin)}&inviterImg={quote_plus(inviterImg)}&inviterNickName={quote_plus(inviterNick)}"
+                activityUrl = f"https://cjhy-isv.isvjcloud.com/microDz/invite/activity/wx/view/index/3499100?activityId={activityId}&inviter={quote_plus(quote_plus(inviterPin))}&inviterImg={quote_plus(inviterImg)}&inviterNickName={quote_plus(inviterNick)}"
 
         time.sleep(3)
