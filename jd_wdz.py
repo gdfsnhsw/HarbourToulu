@@ -24,9 +24,8 @@ from datetime import datetime
 import json
 import random
 from urllib.parse import quote_plus, unquote_plus
-import logging
-logging.basicConfig(level=logging.INFO, format='%(message)s')
-logger = logging.getLogger()
+from functools import partial
+print = partial(print, flush=True)
 import warnings
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
