@@ -71,7 +71,7 @@ def getFansDetail(venderId, cookie):
     res = response.json()
     if res['success']:
         brandName = res['data'][0]['cardInfo']['brandName']
-        if 'newGiftList' in str(res):
+        if 'newGiftList' in str(res) and res['data'][0]['newGiftList']:
             activityId = res['data'][0]['newGiftList'][0]['activityId']
             activityType = res['data'][0]['newGiftList'][0]['activityType']
             prizeTypeName = res['data'][0]['newGiftList'][0]['prizeTypeName']
@@ -100,7 +100,7 @@ if __name__ == '__main__':
             pt_pin = f'用户{num}'
         print(f'\n******开始【京东账号{num}】{pt_pin} *********\n')
         print(datetime.now())
-        # try:
+
         getFD = getFansDetail(venderId, cookie)
         if getFD:
             activityId = getFD[0]
@@ -114,13 +114,3 @@ if __name__ == '__main__':
                     print(f"🎉🎉🎉{brandName} {discount}{prizeTypeName} {cg}")
                 else:
                     print(brandName, cg)
-        # except:
-        #     continue
-
-
-
-
-
-
-
-
