@@ -14,7 +14,7 @@ Description: 部分账号开卡后无法自动领取开卡奖励,不自动开卡
              变量export jd_shopCollectGiftId="1000003443" 变量为店铺venderId
 """
 
-import requests, sys, os, re
+import requests, sys, os, re, time
 from datetime import datetime
 from functools import partial
 print = partial(print, flush=True)
@@ -101,16 +101,20 @@ if __name__ == '__main__':
         print(f'\n******开始【京东账号{num}】{pt_pin} *********\n')
         print(datetime.now())
 
-        getFD = getFansDetail(venderId, cookie)
-        if getFD:
-            activityId = getFD[0]
-            activityType = getFD[1]
-            discount = getFD[2]
-            prizeTypeName = getFD[3]
-            brandName = getFD[4]
-            cg = collectGift(venderId, activityId, activityType, cookie)
-            if cg:
-                if "领取成功" in cg:
-                    print(f"🎉🎉🎉{brandName} {discount}{prizeTypeName} {cg}")
-                else:
-                    print(brandName, cg)
+        try:
+            getFD = getFansDetail(venderId, cookie)
+            if getFD:
+                activityId = getFD[0]
+                activityType = getFD[1]
+                discount = getFD[2]
+                prizeTypeName = getFD[3]
+                brandName = getFD[4]
+                cg = collectGift(venderId, activityId, activityType, cookie)
+                if cg:
+                    if "领取成功" in cg:
+                        print(f"🎉🎉🎉{brandName} {discount}{prizeTypeName} {cg}")
+                    else:
+                        print(brandName, cg)
+        except:
+            continue
+        time.sleep(0.5)
