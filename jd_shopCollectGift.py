@@ -100,22 +100,22 @@ if __name__ == '__main__':
             pt_pin = f'用户{num}'
         print(f'\n******开始【京东账号{num}】{pt_pin} *********\n')
         print(datetime.now())
-        try:
-            getFD = getFansDetail(venderId, cookie)
-            if getFD:
-                activityId = getFD[0]
-                activityType = getFD[1]
-                discount = getFD[2]
-                prizeTypeName = getFD[3]
-                brandName = getFD[4]
-                cg = collectGift(venderId, activityId, activityType, cookie)
-                if cg:
-                    if "领取成功" in cg:
-                        print(f"🎉🎉🎉{brandName} {discount}{prizeTypeName} {cg}")
-                    else:
-                        print(brandName, cg)
-        except:
-            continue
+        # try:
+        getFD = getFansDetail(venderId, cookie)
+        if getFD:
+            activityId = getFD[0]
+            activityType = getFD[1]
+            discount = getFD[2]
+            prizeTypeName = getFD[3]
+            brandName = getFD[4]
+            cg = collectGift(venderId, activityId, activityType, cookie)
+            if cg:
+                if "领取成功" in cg:
+                    print(f"🎉🎉🎉{brandName} {discount}{prizeTypeName} {cg}")
+                else:
+                    print(brandName, cg)
+        # except:
+        #     continue
 
 
 
